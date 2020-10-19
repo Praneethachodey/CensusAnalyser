@@ -26,14 +26,11 @@ public class CensusAnalyser {
 			int namOfEateries = 0;
 			namOfEateries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
 			return namOfEateries;
-		} catch (IOException e) {
-			if (!csvFilePath.contains(".csv"))
-				throw new CensusAnalyserException(e.getMessage(),
-						CensusAnalyserException.ExceptionType.CENSUS_FILE_TYPE_PROBLEM);
-			throw new CensusAnalyserException(e.getMessage(),
-					CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
 		} catch (IllegalStateException e) {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.UNABLE_TO_PARSE);
+		} catch (IOException | RuntimeException e) {
+			throw new CensusAnalyserException(e.getMessage(),
+					CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
 		}
 	}
 
