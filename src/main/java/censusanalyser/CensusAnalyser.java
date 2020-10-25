@@ -16,7 +16,8 @@ public class CensusAnalyser {
 	public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
 		try {
 			Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
-			Iterator<IndiaCensusCSV> censusCSVIterator = new OpenCSVBuilder().getCSSVFileIterator(reader, IndiaCensusCSV.class);
+			ICSVBuilder csvBuilder = new CSVBuilderFactory().createCSVBuilder();
+			Iterator<IndiaCensusCSV> censusCSVIterator = csvBuilder.getCSSVFileIterator(reader, IndiaCensusCSV.class);
 			return getCount(censusCSVIterator);
 		} catch (IllegalStateException e) {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.UNABLE_TO_PARSE);
