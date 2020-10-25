@@ -16,16 +16,8 @@ public class CensusAnalyser {
 	public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
 		try {
 			Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
-			CsvToBeanBuilder<IndiaCensusCSV> csvToBeanBuilder = new CsvToBeanBuilder<>(reader);
-			csvToBeanBuilder.withType(IndiaCensusCSV.class);
-			csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
-			CsvToBean<IndiaCensusCSV> csvToBean = csvToBeanBuilder.build();
-			Iterator<IndiaCensusCSV> censusCSVIterator = csvToBean.iterator();
-			;
-			Iterable<IndiaCensusCSV> csvIterable = () -> censusCSVIterator;
-			int namOfEateries = 0;
-			namOfEateries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
-			return namOfEateries;
+			Iterator<IndiaCensusCSV> censusCSVIterator = new OpenCSVBuilder().getCSSVFileIterator(reader, IndiaCensusCSV.class);
+			return getCount(censusCSVIterator);
 		} catch (IllegalStateException e) {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.UNABLE_TO_PARSE);
 		} catch (IOException | RuntimeException e) {
@@ -37,21 +29,20 @@ public class CensusAnalyser {
 	public int loadStateCodeData(String StateCodeCsvPath) throws CensusAnalyserException {
 		try {
 			Reader reader = Files.newBufferedReader(Paths.get(StateCodeCsvPath));
-			CsvToBeanBuilder<IndiaStateCode> csvToBeanBuilder = new CsvToBeanBuilder<>(reader);
-			csvToBeanBuilder.withType(IndiaStateCode.class);
-			csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
-			CsvToBean<IndiaStateCode> csvToBean = csvToBeanBuilder.build();
-			Iterator<IndiaStateCode> censusCSVIterator = csvToBean.iterator();
-			Iterable<IndiaStateCode> csvIterable = () -> censusCSVIterator;
-			int namOfEateries = 0;
-			namOfEateries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
-			return namOfEateries;
+			Iterator<IndiaStateCode> censusCSVIterator = new OpenCSVBuilder().getCSSVFileIterator(reader,IndiaStateCode.class);
+			return getCount(censusCSVIterator);
 		} catch (IllegalStateException e) {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.UNABLE_TO_PARSE);
-		} catch (IOException|RuntimeException e) {
-			throw new CensusAnalyserException(e.getMessage(),
-					CensusAnalyserException.ExceptionType.STATE_FILE_PROBLM);
+		} catch (IOException | RuntimeException e) {
+			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.STATE_FILE_PROBLM);
 		}
 
 	}
+
+	
+	private <E> int getCount(Iterator<E> iterator) {
+        Iterable<E> iterable = () -> iterator;
+        int namOfEateries = (int) StreamSupport.stream(iterable.spliterator(), false).count();
+        return namOfEateries;
+    }
 }
