@@ -3,8 +3,8 @@ package censusanalyser;
 import java.io.Reader;
 import java.util.Iterator;
 
-public interface ICSVBuilder{
-	public Iterator getCSSVFileIterator(Reader reader, Class csvClass) throws CensusAnalyserException;
+public interface ICSVBuilder<E>{
+	public Iterator<E> getCSSVFileIterator(Reader reader, Class<E> csvClass) throws CSVBuilderException;
 
 
 }
